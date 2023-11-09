@@ -1,0 +1,13 @@
+<h1>Items</h1>
+
+<form method="POST" action="/">
+  <textarea name="content">
+  </textarea>
+  <input type="submit" name="Submit"/>
+</form>
+
+<ul>
+  {% for item in items %}
+    <li>{{ item.content|e }}</li>
+  {% endfor %}
+</ul>
