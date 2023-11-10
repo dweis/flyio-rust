@@ -16,16 +16,20 @@
       overlays = [rust-overlay.overlays.default];
     };
     toolchain = pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml;
+    tailwind = (pkgs.nodePackages.tailwindcss.overrideAttrs (oa: {
+        plugins = [
+          pkgs.nodePackages."@tailwindcss/forms"
+        ];
+        })); # super.tailwind;
   in {
     devShells.${system}.default = pkgs.mkShell {
-      shellHook = ''
-        $SHELL
-      '';
-
       packages = [
         toolchain
         pkgs.darwin.apple_sdk.frameworks.Foundation
         pkgs.darwin.apple_sdk.frameworks.SystemConfiguration 
+        #pkgs.trunk
+        tailwind
+        pkgs.gnumake
 
         # We want the unwrapped version, "rust-analyzer" (wrapped) comes with nixpkgs' toolchain
         pkgs.rust-analyzer-unwrapped

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/main.css" rel="stylesheet" />
+    <title>{% block title %}{{ title }}{% endblock %}</title>
+  </head>
+  <body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-indigo-500 text-xl font-semibold">Boilerplate</h1>
+                    <!-- Navigation Items -->
+                    <div class="ml-10 space-x-4">   
+                      <a href="/items" class="text-gray-800 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium">Items</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <div class="flex flex-wrap md:flex-nowrap py-6">
+    {% block body %}{% endblock %}
+    </div>
+    <!-- Footer -->
+    <footer class="bg-indigo-600 shadow mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <p class="text-white text-sm">
+                    &copy; 2023 [Name]<br/>Made with ♥️  in Victoria, BC 🇨🇦
+                </p>
+                <div class="space-x-4">
+                    <a href="#" class="text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm">Privacy Policy</a>
+                    <a href="#" class="text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm">Terms of Use</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+  </body>
+</html>

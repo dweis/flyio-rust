@@ -1,13 +1,22 @@
-<h1>Items</h1>
+{% extends "base.html" %}
 
-<form method="POST" action="/">
-  <textarea name="content">
-  </textarea>
-  <input type="submit" name="Submit"/>
-</form>
+{% block title %}Items{% endblock %}
 
-<ul>
-  {% for item in items %}
-    <li>{{ item.content|e }}</li>
-  {% endfor %}
-</ul>
+{% block body %}
+<div class="md:w-1/2 w-full px-4">
+    <ul class="list-disc pl-5 space-y-2">
+      {% for item in items %}
+        <li>{{ item.content|e }}</li>
+      {% endfor %}
+    </ul>
+</div>
+
+<div class="md:w-1/2 w-full px-4">
+    <form action="/items" method="POST">
+        <textarea name="content" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Content..."></textarea>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+            Save
+        </button>
+    </form>
+</div>
+{% endblock %}

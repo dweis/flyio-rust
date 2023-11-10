@@ -1,0 +1,1 @@
+- Integrate prettier + prettier-plugin-tailwindcss https://github.com/tailwindlabs/prettier-plugin-tailwindcss
