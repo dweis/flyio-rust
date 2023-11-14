@@ -10,30 +10,30 @@ use validator::Validate;
 use crate::data;
 
 #[derive(Template)]
-#[template(path = "items.html")]
-struct ItemsTemplate<'a> {
-    items: &'a Vec<data::item::Item>,
+#[template(path = "todos.html")]
+struct TodosTemplate<'a> {
+    todos: &'a Vec<data::todo::Todo>,
 }
 
 #[derive(Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct CreateItemRequest {
+pub struct CreateTodoRequest {
     #[validate(length(min = 1, max = 1000))]
     pub content: String,
 }
 
 pub fn router() -> Router {
-    Router::new().route("/items", get(handle_get_items).post(handle_create_item))
+    Router::new().route("/", get(handle_get_todos).post(handle_create_todo))
 }
 
 #[axum::debug_handler]
-pub async fn handle_get_items(db: Extension<PgPool>) -> impl IntoResponse {
+pub async fn handle_get_todos(db: Extension<PgPool>) -> impl IntoResponse {
     //Result<Html<&'static str>> {
-    let items = data::item::get_items(&*db).await;
+    let todos = data::todo::get_todos(&*db).await;
 
-    match items {
-        Ok(items) => {
-            let tmpl = ItemsTemplate { items: &items };
+    match todos {
+        Ok(todos) => {
+            let tmpl = TodosTemplate { todos: &todos };
 
             (StatusCode::OK, Html(tmpl.render().unwrap()).into_response())
         }
@@ -42,19 +42,19 @@ pub async fn handle_get_items(db: Extension<PgPool>) -> impl IntoResponse {
 }
 
 #[axum::debug_handler]
-pub async fn handle_create_item(
+pub async fn handle_create_todo(
     db: Extension<PgPool>,
-    Form(req): Form<CreateItemRequest>,
+    Form(req): Form<CreateTodoRequest>,
 ) -> impl IntoResponse {
     req.validate().unwrap();
 
-    data::item::create_item(&*db, req.content).await;
+    data::todo::create_todo(&*db, req.content).await;
 
-    let items = data::item::get_items(&*db).await;
+    let todos = data::todo::get_todos(&*db).await;
 
-    match items {
-        Ok(items) => {
-            let tmpl = ItemsTemplate { items: &items };
+    match todos {
+        Ok(todos) => {
+            let tmpl = TodosTemplate { todos: &todos };
 
             (StatusCode::OK, Html(tmpl.render().unwrap()).into_response())
         }

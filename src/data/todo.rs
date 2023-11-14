@@ -6,24 +6,24 @@ use uuid::Uuid;
 #[serde_with::serde_as]
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct Item {
-    pub item_id: Uuid,
+pub struct Todo {
+    pub todo_id: Uuid,
     pub content: String,
     // `OffsetDateTime`'s default serialization format is not standard.
     #[serde_as(as = "Rfc3339")]
     pub created_at: OffsetDateTime,
 }
 
-pub async fn create_item(db: &PgPool, content: String) -> Result<Item, Error> {
+pub async fn create_todo(db: &PgPool, content: String) -> Result<Todo, Error> {
     sqlx::query_as!(
-        Item,
+        Todo,
         r#"
-            with inserted_item as (
-                insert into item(content)
+            with inserted_todo as (
+                insert into todo(content)
                 values($1)
-                returning item_id, content, created_at
+                returning todo_id, content, created_at
             ) 
-            select item_id, content, created_at from inserted_item
+            select todo_id, content, created_at from inserted_todo
         "#,
         content
     )
@@ -31,13 +31,13 @@ pub async fn create_item(db: &PgPool, content: String) -> Result<Item, Error> {
     .await
 }
 
-pub async fn get_items(db: &PgPool) -> Result<Vec<Item>, Error> {
+pub async fn get_todos(db: &PgPool) -> Result<Vec<Todo>, Error> {
     sqlx::query_as!(
-        Item,
+        Todo,
         // language=PostgreSQL
         "
-            select item_id, content, created_at
-            from item
+            select todo_id, content, created_at
+            from todo
             order by created_at
         ",
     )

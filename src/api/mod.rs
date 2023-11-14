@@ -3,7 +3,7 @@ use askama_axum::IntoResponse;
 
 use axum::{http::StatusCode, response::Html};
 
-pub mod items;
+pub mod todos;
 
 #[derive(Template)]
 #[template(path = "not_found.html")]
