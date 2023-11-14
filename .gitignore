@@ -1,5 +1,6 @@
 /assets/main.css
 /target
-.envrc
+.envrc.local
+.direnv
 .sqlx
 sqlite.db

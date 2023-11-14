@@ -19,6 +19,7 @@ WORKDIR /app
 
 # Get compiled binaries from builder's cargo install directory
 COPY --from=builder /usr/src/app/flyio-rust /app/flyio-rust
+COPY static /app/static
 
 # Run the app
 CMD ./flyio-rust
