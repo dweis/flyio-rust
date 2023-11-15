@@ -2,5 +2,4 @@
 /target
 .envrc.local
 .direnv
-.sqlx
-sqlite.db
+result

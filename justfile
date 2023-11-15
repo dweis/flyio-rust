@@ -20,3 +20,16 @@ watch *ARGS:
 
 tailwind:
   tailwindcss -o static/main.css styles/tailwind.css
+
+test:
+  cargo fmt
+  cargo clippy -- -D warnings
+  cargo test
+
+sqlxprepare:
+  cargo sqlx prepare -- --lib
+
+pre-commit: tailwind test sqlxprepare
+
+install-git-hooks:
+  echo "just pre-commit" > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit

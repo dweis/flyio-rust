@@ -27,20 +27,19 @@ pub async fn create_todo(db: &PgPool, content: String) -> Result<Todo, Error> {
         "#,
         content
     )
-    .fetch_one(&*db)
+    .fetch_one(db)
     .await
 }
 
 pub async fn get_todos(db: &PgPool) -> Result<Vec<Todo>, Error> {
     sqlx::query_as!(
         Todo,
-        // language=PostgreSQL
         "
             select todo_id, content, created_at
             from todo
             order by created_at
         ",
     )
-    .fetch_all(&*db)
+    .fetch_all(db)
     .await
 }

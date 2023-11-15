@@ -1,13 +1,11 @@
 use askama::Template;
 use askama_axum::IntoResponse;
-use axum::{
-   http::StatusCode, response::Html, routing::*, Extension, Form,
-};
+use axum::{http::StatusCode, response::Html, routing::*, Extension, Form};
 use serde::Deserialize;
 use sqlx::PgPool;
 use validator::Validate;
 
-use crate::data;
+use crate::{data, error::Error};
 
 #[derive(Template)]
 #[template(path = "todos.html")]
@@ -27,37 +25,26 @@ pub fn router() -> Router {
 }
 
 #[axum::debug_handler]
-pub async fn handle_get_todos(db: Extension<PgPool>) -> impl IntoResponse {
+pub async fn handle_get_todos(db: Extension<PgPool>) -> Result<impl IntoResponse, Error> {
     //Result<Html<&'static str>> {
-    let todos = data::todo::get_todos(&*db).await;
+    let todos = data::todo::get_todos(&db).await?;
 
-    match todos {
-        Ok(todos) => {
-            let tmpl = TodosTemplate { todos: &todos };
+    let tmpl = TodosTemplate { todos: &todos };
 
-            (StatusCode::OK, Html(tmpl.render().unwrap()).into_response())
-        }
-        _ => (StatusCode::INTERNAL_SERVER_ERROR, "foo".into_response()),
-    }
+    Ok((StatusCode::OK, Html(tmpl.render().unwrap()).into_response()))
 }
 
 #[axum::debug_handler]
 pub async fn handle_create_todo(
     db: Extension<PgPool>,
     Form(req): Form<CreateTodoRequest>,
-) -> impl IntoResponse {
-    req.validate().unwrap();
+) -> Result<impl IntoResponse, Error> {
+    req.validate()?;
 
-    data::todo::create_todo(&*db, req.content).await;
+    data::todo::create_todo(&db, req.content).await?;
 
-    let todos = data::todo::get_todos(&*db).await;
+    let todos = data::todo::get_todos(&db).await?;
+    let tmpl = TodosTemplate { todos: &todos };
 
-    match todos {
-        Ok(todos) => {
-            let tmpl = TodosTemplate { todos: &todos };
-
-            (StatusCode::OK, Html(tmpl.render().unwrap()).into_response())
-        }
-        _ => (StatusCode::INTERNAL_SERVER_ERROR, "foo".into_response()),
-    }
+    Ok((StatusCode::OK, Html(tmpl.render().unwrap()).into_response()))
 }

@@ -51,15 +51,19 @@
           # Rust package
           packages.default = pkgs.rustPlatform.buildRustPackage {
             inherit (cargoToml.package) name version;
+            inherit buildInputs nativeBuildInputs;
             src = ./.;
             cargoLock.lockFile = ./Cargo.lock;
-            inherit buildInputs nativeBuildInputs;
+            SQLX_OFFLINE = "true";
           };
 
           # Docker image
           packages.docker = pkgs.dockerTools.buildLayeredImage {
             name = cargoToml.package.name;
             tag = cargoToml.package.version;
+
+            contents = [ pkgs.bash pkgs.coreutils pkgs.curl pkgs.vim ];
+
             config = {
               Cmd = [ "${self'.packages.default}/bin/${cargoToml.package.name}" ];
             };
@@ -80,12 +84,15 @@
             RUST_BACKTRACE = 1;
             # For rust-analyzer 'hover' tooltips to work.
             RUST_SRC_PATH = rustToolchain + /lib/rustlib/src/rust/library;
+            # Local development database connection string
+            DATABASE_URL = "postgres://postgres:mysecretpassword@localhost:5432/postgres";
 
             inherit buildInputs;
             nativeBuildInputs = nativeBuildInputs ++ (with pkgs; [
               cargo-watch
               flyctl
               just
+              nixpacks
               rust-analyzer
             ]);
           };

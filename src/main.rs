@@ -1,7 +1,7 @@
 use anyhow::Context;
 use axum::{Extension, Router};
 use flyio_rust::api;
-use sqlx::{PgPool, postgres::PgPoolOptions};
+use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::{env, net::SocketAddr};
 use tower_http::services::ServeDir;
 
