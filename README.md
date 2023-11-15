@@ -14,18 +14,18 @@ psql postgres://postgres:mysecretpassword@localhost:5432/postgres
 
 Make sure cargo sqlx is installed:
 
-
 ```bash
 cargo install sqlx
 ```
 
 Add a migration:
+
 ```bash
 cargo sqlx migrate add
 ```
 
 Run migrations:
+
 ```bash
 cargo sqlx migrate run
 ```
-

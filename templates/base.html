@@ -1,36 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/static/main.css" rel="stylesheet" />
     <title>{% block title %}{{ title }}{% endblock %}</title>
   </head>
-<body class="bg-gray-100">
-
+  <body class="bg-gray-100">
     <!-- Navbar -->
     <nav class="bg-white shadow-lg">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="flex justify-between">
-                <div class="flex space-x-7">
-                    <div>
-                        <!-- Website Logo -->
-                        <a href="#" class="flex items-center py-4 px-2">
-                            <span class="font-semibold text-gray-500 text-lg">Todo App</span>
-                        </a>
-                    </div>
-                </div>
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex justify-between">
+          <div class="flex space-x-7">
+            <div>
+              <!-- Website Logo -->
+              <a href="#" class="flex items-center py-4 px-2">
+                <span class="font-semibold text-gray-500 text-lg"
+                  >Todo App</span
+                >
+              </a>
             </div>
+          </div>
         </div>
+      </div>
     </nav>
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
-    {% block body %}{% endblock %}
+      {% block body %}{% endblock %}
     </div>
 
     <!-- Footer -->
     <footer class="bg-white shadow-lg p-4 text-center">
-        <span class="text-sm text-gray-500">© 2023 Todo App. All rights reserved.</span>
+      <span class="text-sm text-gray-500"
+        >© 2023 Derrick Weis. Made with ❤️ in Victoria, BC, Canada 🇨🇦.</span
+      >
     </footer>
   </body>
 </html>

@@ -107,6 +107,11 @@
             programs = {
               nixpkgs-fmt.enable = true;
               rustfmt.enable = true;
+              prettier = {
+                enable = true;
+                excludes = [ "static/**" ];
+                # TODO: Add support for tailwindcss, currently not available in nixpkgs
+              };
             };
           };
         };
