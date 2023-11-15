@@ -32,4 +32,4 @@ sqlxprepare:
 pre-commit: tailwind test sqlxprepare
 
 install-git-hooks:
-  echo "just pre-commit" > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+  grep "just pre-commit" .git/hooks/pre-commit || (echo "just pre-commit" >> .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit)

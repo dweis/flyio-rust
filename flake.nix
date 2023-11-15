@@ -77,6 +77,9 @@
             shellHook = ''
               echo
               echo "🦀 Run 'just <recipe>' to get started 🦀"
+              echo
+              echo "Please consider installing the git pre-commit hook:"
+              echo "  'just install-git-hooks'"
               just
             '';
 
