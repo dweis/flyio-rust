@@ -96,7 +96,9 @@
               flyctl
               just
               nixpacks
+              postgresql
               rust-analyzer
+              sqlx-cli
             ]);
           };
 
