@@ -36,7 +36,12 @@ async fn main() -> anyhow::Result<()> {
 pub fn app(db: PgPool) -> Router {
     Router::new()
         .merge(api::todos::router())
-        .nest_service("/static", ServeDir::new("static"))
+        .nest_service(
+            "/static",
+            ServeDir::new("static")
+                .precompressed_br()
+                .precompressed_gzip(),
+        )
         .fallback(api::handle_404)
         .layer(Extension(db))
 }

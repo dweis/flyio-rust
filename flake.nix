@@ -9,6 +9,10 @@
   };
 
   outputs = { self, flake-parts, rust-overlay, ... }@ inputs:
+
+    let
+      flyApp = "wandering-dawn-1528";
+    in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
       imports = [
@@ -40,6 +44,22 @@
               pkgs.darwin.apple_sdk.frameworks.Cocoa
             ]
           );
+          # Build the static folder
+          static = pkgs.stdenv.mkDerivation {
+            name = "app-static";
+            src = ./static;
+            buildInputs = with pkgs; [ brotli gzip ];
+            buildPhase = ''
+              for i in `find . -type f`; do
+                gzip -c $i > $i.gz
+                brotli -c $i > $i.br
+              done
+            '';
+            installPhase = ''
+              mkdir -p $out
+              cp -R . $out/static
+            '';
+          };
         in
         {
           # Apply Rust overlay
@@ -57,12 +77,15 @@
             SQLX_OFFLINE = "true";
           };
 
+          # Static assets
+          packages.static = static;
+
           # Docker image
           packages.docker = pkgs.dockerTools.buildLayeredImage {
             name = cargoToml.package.name;
             tag = cargoToml.package.version;
 
-            contents = [ pkgs.bash pkgs.coreutils pkgs.curl pkgs.vim ];
+            contents = [ static ];
 
             config = {
               Cmd = [ "${self'.packages.default}/bin/${cargoToml.package.name}" ];
@@ -89,10 +112,14 @@
             RUST_SRC_PATH = rustToolchain + /lib/rustlib/src/rust/library;
             # Local development database connection string
             DATABASE_URL = "postgres://postgres:mysecretpassword@localhost:5432/postgres";
+            APP_NAME = cargoToml.package.name;
+            APP_NAME_FLY = "${flyApp}";
+            APP_VERSION = cargoToml.package.version;
 
             inherit buildInputs;
             nativeBuildInputs = nativeBuildInputs ++ (with pkgs; [
               cargo-watch
+              dive
               flyctl
               just
               nixpacks

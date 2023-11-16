@@ -14,6 +14,9 @@ stopdb:
 migratedb:
   cargo sqlx migrate run
 
+db:
+  psql ${DATABASE_URL}
+
 # Run 'cargo watch' to run the project (auto-recompiles)
 watch *ARGS:
   cargo watch -x "run -- {{ARGS}}"
@@ -37,3 +40,11 @@ pre-commit: tailwind format lint test sqlxprepare
 
 install-git-hooks:
   grep "just pre-commit" .git/hooks/pre-commit || (echo "just pre-commit" >> .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit)
+
+deploy:
+  nix build '.#docker'
+  cat result | docker load
+  flyctl auth docker
+  docker tag ${APP_NAME}:${APP_VERSION} registry.fly.io/${APP_NAME_FLY}:${APP_VERSION}
+  docker push registry.fly.io/${APP_NAME_FLY}:${APP_VERSION}
+  flyctl deploy
