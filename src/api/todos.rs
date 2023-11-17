@@ -6,31 +6,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 use validator::Validate;
 
-use crate::{data, error::Error};
-
-#[derive(Template)]
-#[template(path = "todos.html")]
-struct TodosTemplate<'a> {
-    todos: &'a Vec<data::todo::Todo>,
-}
-
-#[derive(Template)]
-#[template(path = "todos_partial.html")]
-struct PartialTodosTemplate<'a> {
-    todos: &'a Vec<data::todo::Todo>,
-}
-
-#[derive(Template)]
-#[template(path = "single_todo.html")]
-struct SingleTodoTemplate<'a> {
-    todo: &'a data::todo::Todo,
-}
-
-#[derive(Template)]
-#[template(path = "edit_todo.html")]
-struct EditTodoTemplate<'a> {
-    todo: &'a data::todo::Todo,
-}
+use crate::{data, error::Error, templates::*};
 
 #[derive(Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]

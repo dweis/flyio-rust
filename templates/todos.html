@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block title %}Todos{% endblock %} {% block body %}
+{% extends "layout/base.html" %} {% block title %}Todos{% endblock %} {% block
+body %}
 <div class="bg-white p-8 rounded-lg shadow-lg">
   <h1 class="text-xl font-semibold mb-4">Add Task</h1>
   <div class="flex items-center space-x-4">
@@ -25,7 +26,7 @@
 <div class="mt-8">
   <h2 class="text-xl font-semibold mb-4">Tasks</h2>
   <div id="todos" class="bg-white p-8 rounded-lg shadow-lg">
-    {% include "todos_partial.html" %}
+    {% include "partial/todos.html" %}
   </div>
 </div>
 

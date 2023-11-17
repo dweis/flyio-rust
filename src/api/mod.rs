@@ -3,11 +3,9 @@ use askama_axum::IntoResponse;
 
 use axum::{http::StatusCode, response::Html};
 
-pub mod todos;
+use crate::templates::*;
 
-#[derive(Template)]
-#[template(path = "not_found.html")]
-struct NotFoundTemplate;
+pub mod todos;
 
 pub async fn handle_404() -> impl IntoResponse {
     (

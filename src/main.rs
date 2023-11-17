@@ -3,8 +3,11 @@ use axum::{Extension, Router};
 use flyio_rust::api;
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::{env, net::SocketAddr};
-use tower_http::services::ServeDir;
-use tracing::info;
+use tower_http::{
+    services::ServeDir,
+    trace::{DefaultOnRequest, DefaultOnResponse},
+};
+use tracing::{info, Level};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 const DEFAULT_PORT: u16 = 8080;
@@ -13,8 +16,9 @@ const DEFAULT_PORT: u16 = 8080;
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::registry()
         .with(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "flyio_rust=debug".into()),
+            tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| {
+                "flyio_rust=debug,tower_http=debug,axum::rejection=trace".into()
+            }),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
@@ -55,4 +59,9 @@ pub fn app(db: PgPool) -> Router {
         )
         .fallback(api::handle_404)
         .layer(Extension(db))
+        .layer(
+            tower_http::trace::TraceLayer::new_for_http()
+                .on_request(DefaultOnRequest::new().level(Level::INFO))
+                .on_response(DefaultOnResponse::new().level(Level::INFO)),
+        )
 }
