@@ -42,6 +42,7 @@ install-git-hooks:
   grep "just pre-commit" .git/hooks/pre-commit || (echo "just pre-commit" >> .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit)
 
 deploy:
+  cargo sqlx prepare
   nix build '.#docker'
   cat result | docker load
   flyctl auth docker
