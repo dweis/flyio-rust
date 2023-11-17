@@ -6,7 +6,7 @@ use std::{env, net::SocketAddr};
 use tower_http::services::ServeDir;
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
- 
+
 const DEFAULT_PORT: u16 = 8080;
 
 #[tokio::main]

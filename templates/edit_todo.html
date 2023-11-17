@@ -1,6 +1,14 @@
-<div class="todo flex items-center justify-between mb-4" hx-target="this" hx-swap="outerHTML">
+<div
+  class="todo flex items-center justify-between mb-4"
+  hx-target="this"
+  hx-swap="outerHTML"
+>
   <div class="flex items-center">
-    <input type="text" name="content" hx-put="/todos/{{ todo.todo_id }}" value="{{ todo.content|e }}"</input>
+    <input
+      type="text"
+      name="content"
+      hx-put="/todos/{{ todo.todo_id }}"
+      value="{{ todo.content|e }}"
+    />
   </div>
 </div>
-
