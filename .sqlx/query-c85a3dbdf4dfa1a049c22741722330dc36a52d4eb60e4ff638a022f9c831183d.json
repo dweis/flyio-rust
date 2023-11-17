@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            with inserted_todo as (\n                insert into todo(content)\n                values($1)\n                returning todo_id, content, done, created_at\n            ) \n            select todo_id, content, done, created_at from inserted_todo\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "todo_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "done",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 3,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "c85a3dbdf4dfa1a049c22741722330dc36a52d4eb60e4ff638a022f9c831183d"
+}

@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select todo_id, content, done, created_at\n            from todo\n            where todo_id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "todo_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "done",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 3,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "e2133901f78185c2a07338672a50db7e3670603830c0e781dfd776b14306e831"
+}
