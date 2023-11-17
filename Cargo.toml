@@ -32,5 +32,7 @@ time = "0.3.30"
 tokio = { version = "1.33.0", features = ["full"] }
 tower = { version = "0.4.4", features = ["util"] }
 tower-http = { version = "0.4.4", features = ["fs", "trace"] }
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 uuid = { version = "1.5.0", features = ["serde"] }
 validator = { version = "0.16.1", features = ["derive"] }

@@ -4,11 +4,21 @@ use flyio_rust::api;
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::{env, net::SocketAddr};
 use tower_http::services::ServeDir;
-
+use tracing::info;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+ 
 const DEFAULT_PORT: u16 = 8080;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "flyio_rust=debug".into()),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
     let port = env::var("PORT")
         .map(|x| x.parse::<u16>())
         .unwrap_or(Ok(DEFAULT_PORT))
@@ -25,7 +35,8 @@ async fn main() -> anyhow::Result<()> {
     sqlx::migrate!().run(&db).await?;
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
-    println!("listening on {}", addr);
+
+    info!("listening on {}", addr);
 
     axum::Server::bind(&addr)
         .serve(app(db).into_make_service())

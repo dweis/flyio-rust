@@ -1,0 +1,9 @@
+<div class="todo flex items-center justify-between mb-4" hx-target="this" hx-swap="outerHTML">
+  <div class="flex items-center">
+    <input type="checkbox" class="mr-2" {% if todo.done %}checked{%endif%}
+      hx-post="/todos/{{ todo.todo_id }}/toggle" hx-swap="outerHTML" hx-target="closest .todo" />
+    <span hx-get="/todos/{{ todo.todo_id }}/edit">{{ todo.content|e }}</span>
+    <input type="button" value="Delete" class="ml-4 py-1 px-2 bg-red-500 text-white rounded"
+      hx-delete="/todos/{{ todo.todo_id }}" hx-swap="outerHTML" hx-target="closest .todo" />
+  </div>
+</div>
