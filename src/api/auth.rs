@@ -29,15 +29,19 @@ pub fn router() -> Router {
 }
 
 #[axum::debug_handler]
-pub async fn handle_login() -> Result<impl IntoResponse, Error> {
-    let tmpl = LoginTemplate {};
+pub async fn handle_login(auth_session: AuthSession) -> Result<impl IntoResponse, Error> {
+    let tmpl = LoginTemplate {
+        user: &auth_session.user,
+    };
 
     Ok((StatusCode::OK, Html(tmpl.render().unwrap()).into_response()))
 }
 
 #[axum::debug_handler]
-pub async fn handle_signup() -> Result<impl IntoResponse, Error> {
-    let tmpl = SignupTemplate {};
+pub async fn handle_signup(auth_session: AuthSession) -> Result<impl IntoResponse, Error> {
+    let tmpl = SignupTemplate {
+        user: &auth_session.user,
+    };
 
     Ok((StatusCode::OK, Html(tmpl.render().unwrap()).into_response()))
 }
@@ -76,7 +80,7 @@ pub async fn handle_login_post(
     let user = match auth_session.authenticate(creds).await {
         Ok(Some(user)) => user,
         Ok(None) => {
-            return LoginTemplate {}.into_response();
+            return LoginTemplate { user: &None }.into_response();
         }
         Err(e) => {
             warn!("Error authenticating user: {:?}", e);

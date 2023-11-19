@@ -28,7 +28,7 @@ redis:
 
 # Run 'cargo watch' to run the project (auto-recompiles)
 watch *ARGS:
-  cargo watch -x "run -- {{ARGS}}"
+  cargo watch -s 'just tailwind' -x "run -- {{ARGS}}"
 
 tailwind:
   tailwindcss -o static/main.css styles/tailwind.css

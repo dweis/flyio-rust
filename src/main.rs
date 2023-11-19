@@ -1,5 +1,7 @@
 use anyhow::Context;
-use axum::{error_handling::HandleErrorLayer, http::StatusCode, BoxError, Extension, Router};
+use axum::{
+    error_handling::HandleErrorLayer, http::StatusCode, routing::get, BoxError, Extension, Router,
+};
 use axum_login::{
     login_required,
     tower_sessions::{Expiry, RedisStore, SessionManagerLayer},
@@ -54,7 +56,10 @@ async fn main() -> anyhow::Result<()> {
     let redis_client = RedisClient::new(redis_config, None, None, None);
 
     redis_client.connect();
-    redis_client.wait_for_connect().await?;
+    redis_client
+        .wait_for_connect()
+        .await
+        .context("failed to connect to REDIS_URL")?;
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
 
@@ -88,9 +93,9 @@ pub fn app(db: PgPool, redis: RedisClient) -> Router {
         .layer(AuthManagerLayerBuilder::new(backend, session_layer).build());
 
     Router::new()
+        .route("/", get(api::handle_index))
         .merge(api::auth::router())
         .merge(api::todos::router().route_layer(login_required!(Backend, login_url = "/login")))
-        .layer(auth_service)
         .nest_service(
             "/static",
             ServeDir::new("static")
@@ -98,6 +103,7 @@ pub fn app(db: PgPool, redis: RedisClient) -> Router {
                 .precompressed_gzip(),
         )
         .fallback(api::handle_404)
+        .layer(auth_service)
         .layer(Extension(db))
         .layer(
             tower_http::trace::TraceLayer::new_for_http()

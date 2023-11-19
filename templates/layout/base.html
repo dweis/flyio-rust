@@ -11,6 +11,7 @@
     <nav class="bg-white shadow-lg">
       <div class="max-w-6xl mx-auto px-4">
         <div class="flex justify-between">
+          <!-- Left Nav Section -->
           <div class="flex space-x-7">
             <div>
               <!-- Website Logo -->
@@ -21,6 +22,30 @@
               </a>
             </div>
           </div>
+          {% if user.is_some() %}
+          <!-- Right justified login/logout/signup -->
+          <div class="hidden md:flex items-center space-x-1">
+            <a
+              href="/logout"
+              class="py-4 px-2 text-green-500 font-semibold hover:text-green-400 transition duration-300"
+              >Logout</a
+            >
+          </div>
+          {% else %}
+          <!-- Right justified login/logout/signup -->
+          <div class="hidden md:flex items-center space-x-1">
+            <a
+              href="/login"
+              class="py-4 px-2 text-green-500 font-semibold hover:text-green-400 transition duration-300"
+              >Login</a
+            >
+            <a
+              href="/signup"
+              class="py-2 px-2 font-semibold hover:text-green-400 transition duration-300"
+              >Signup</a
+            >
+          </div>
+          {% endif %}
         </div>
       </div>
     </nav>

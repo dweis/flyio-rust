@@ -38,7 +38,10 @@ pub async fn handle_get_todos(
     //Result<Html<&'static str>> {
     let todos = data::todo::get_todos(&db, user.user_id).await?;
 
-    let tmpl = TodosTemplate { todos: &todos };
+    let tmpl = TodosTemplate {
+        user: &Some(user),
+        todos: &todos,
+    };
 
     Ok((StatusCode::OK, Html(tmpl.render().unwrap()).into_response()))
 }
