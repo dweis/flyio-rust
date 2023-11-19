@@ -122,6 +122,7 @@
             nativeBuildInputs = nativeBuildInputs ++ (with pkgs; [
               cargo-watch
               dive
+              docker-compose
               flyctl
               just
               nixpacks
