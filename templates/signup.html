@@ -1,0 +1,18 @@
+{% extends "layout/base.html" %} {% block title %}Signup{% endblock %} {% block
+body %}
+
+<form method="POST" action="/signup">
+  <fieldset>
+    <legend>Signup</legend>
+    <input type="text" name="email" placeholder="Email" />
+    <input type="password" name="password" placeholder="Password" />
+    <input
+      type="password"
+      name="confirm_password"
+      placeholder="Confirm Password"
+    />
+    <input type="submit" value="Signup" />
+  </fieldset>
+</form>
+
+{% endblock %}

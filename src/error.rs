@@ -3,6 +3,7 @@ use axum::response::{IntoResponse, Response};
 use axum::Json;
 
 use serde_with::DisplayFromStr;
+use tracing::*;
 use validator::ValidationErrors;
 
 /// An API-friendly error type.
@@ -27,10 +28,15 @@ pub enum Error {
 
     #[error("{0}")]
     Conflict(String),
+
+    #[error("unauthorized")]
+    Unauthorized,
 }
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
+        warn!("API error: {:?}", self);
+
         #[serde_with::serde_as]
         #[serde_with::skip_serializing_none]
         #[derive(serde::Serialize)]
@@ -46,10 +52,6 @@ impl IntoResponse for Error {
             Error::InvalidEntity(errors) => Some(errors),
             _ => None,
         };
-
-        // Normally you wouldn't just print this, but it's useful for debugging without
-        // using a logging framework.
-        println!("API error: {self:?}");
 
         (
             self.status_code(),
@@ -70,6 +72,7 @@ impl Error {
             Sqlx(_) | Anyhow(_) => StatusCode::INTERNAL_SERVER_ERROR,
             InvalidEntity(_) | UnprocessableEntity(_) => StatusCode::UNPROCESSABLE_ENTITY,
             Conflict(_) => StatusCode::CONFLICT,
+            Unauthorized => StatusCode::UNAUTHORIZED,
         }
     }
 }

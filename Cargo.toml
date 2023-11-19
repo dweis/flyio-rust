@@ -1,6 +1,6 @@
 [package]
 name = "flyio-rust"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 [profile.release]
@@ -16,7 +16,11 @@ panic = "abort"
 anyhow = "1.0.75"
 askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.3.0"
+async-trait = "0.1.74"
 axum = { version = "0.6.20", features = ["macros"] }
+axum-login = "0.9.0"
+fred = "7.0.0"
+password-auth = "1.0.0"
 serde = { version = "1.0.192", features = ["derive"] }
 serde_with = { version = "3.4.0", features = ["time_0_3"] }
 sqlx = { version = "0.7.2", features = [
@@ -32,6 +36,7 @@ time = "0.3.30"
 tokio = { version = "1.33.0", features = ["full"] }
 tower = { version = "0.4.4", features = ["util"] }
 tower-http = { version = "0.4.4", features = ["fs", "trace"] }
+tower-sessions = { version = "0.6.0", features = ["redis-store"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 uuid = { version = "1.5.0", features = ["serde"] }

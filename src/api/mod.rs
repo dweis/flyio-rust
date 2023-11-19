@@ -5,6 +5,7 @@ use axum::{http::StatusCode, response::Html};
 
 use crate::templates::*;
 
+pub mod auth;
 pub mod todos;
 
 pub async fn handle_404() -> impl IntoResponse {

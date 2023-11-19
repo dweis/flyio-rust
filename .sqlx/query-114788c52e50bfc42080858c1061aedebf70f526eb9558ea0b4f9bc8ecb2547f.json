@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            update todos\n            set content = $3\n            where user_id = $1 and todo_id = $2\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "114788c52e50bfc42080858c1061aedebf70f526eb9558ea0b4f9bc8ecb2547f"
+}

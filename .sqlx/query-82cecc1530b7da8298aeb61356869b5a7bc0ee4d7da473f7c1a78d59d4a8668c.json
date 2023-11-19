@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            select todo_id, content, done, created_at\n            from todo\n            where todo_id = $1\n        ",
+  "query": "\n            select todo_id, content, done, user_id, created_at\n            from todos\n            where user_id = $1 and todo_id = $2\n        ",
   "describe": {
     "columns": [
       {
@@ -20,12 +20,18 @@
       },
       {
         "ordinal": 3,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
         "name": "created_at",
         "type_info": "Timestamptz"
       }
     ],
     "parameters": {
       "Left": [
+        "Uuid",
         "Uuid"
       ]
     },
@@ -33,8 +39,9 @@
       false,
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "e2133901f78185c2a07338672a50db7e3670603830c0e781dfd776b14306e831"
+  "hash": "82cecc1530b7da8298aeb61356869b5a7bc0ee4d7da473f7c1a78d59d4a8668c"
 }

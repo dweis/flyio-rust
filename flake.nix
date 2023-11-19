@@ -112,6 +112,8 @@
             RUST_SRC_PATH = rustToolchain + /lib/rustlib/src/rust/library;
             # Local development database connection string
             DATABASE_URL = "postgres://postgres:mysecretpassword@localhost:5432/postgres";
+            # Local redis connection string
+            REDIS_URL = "redis://localhost:6379";
             APP_NAME = cargoToml.package.name;
             APP_NAME_FLY = "${flyApp}";
             APP_VERSION = cargoToml.package.version;
@@ -124,6 +126,7 @@
               just
               nixpacks
               postgresql
+              redis
               rust-analyzer
               sqlx-cli
             ]);

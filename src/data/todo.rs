@@ -10,62 +10,68 @@ pub struct Todo {
     pub todo_id: Uuid,
     pub content: String,
     pub done: bool,
+    pub user_id: Uuid,
     // `OffsetDateTime`'s default serialization format is not standard.
     #[serde_as(as = "Rfc3339")]
     pub created_at: OffsetDateTime,
 }
 
-pub async fn create_todo(db: &PgPool, content: String) -> Result<Todo, Error> {
+pub async fn create_todo(db: &PgPool, user_id: Uuid, content: String) -> Result<Todo, Error> {
     sqlx::query_as!(
         Todo,
         r#"
             with inserted_todo as (
-                insert into todo(content)
-                values($1)
-                returning todo_id, content, done, created_at
+                insert into todos(user_id, content)
+                values($1, $2)
+                returning todo_id, content, done, user_id, created_at
             ) 
-            select todo_id, content, done, created_at from inserted_todo
+            select todo_id, content, done, user_id, created_at from inserted_todo
         "#,
-        content
+        user_id,
+        content,
     )
     .fetch_one(db)
     .await
 }
 
-pub async fn get_todos(db: &PgPool) -> Result<Vec<Todo>, Error> {
+pub async fn get_todos(db: &PgPool, user_id: Uuid) -> Result<Vec<Todo>, Error> {
     sqlx::query_as!(
         Todo,
         "
-            select todo_id, content, done, created_at
-            from todo
+            select todo_id, content, done, user_id, created_at
+            from todos
+            where user_id = $1
             order by created_at
         ",
+        user_id,
     )
     .fetch_all(db)
     .await
 }
 
-pub async fn get_todo_by_id(db: &PgPool, todo_id: Uuid) -> Result<Todo, Error> {
+pub async fn get_todo_by_id(db: &PgPool, user_id: Uuid, todo_id: Uuid) -> Result<Todo, Error> {
     sqlx::query_as!(
         Todo,
         "
-            select todo_id, content, done, created_at
-            from todo
-            where todo_id = $1
+            select todo_id, content, done, user_id, created_at
+            from todos
+            where user_id = $1 and todo_id = $2
         ",
-        todo_id
+        user_id,
+        todo_id,
     )
     .fetch_one(db)
     .await
 }
 
-pub async fn delete_todo_by_id(db: &PgPool, todo_id: Uuid) -> Result<(), Error> {
+pub async fn delete_todo_by_id(db: &PgPool, user_id: Uuid, todo_id: Uuid) -> Result<(), Error> {
     sqlx::query!(
         "
-            delete from todo
-            where todo_id = $1
+            delete from todos
+            where user_id = $1 and todo_id = $2
         ",
-        todo_id
+        user_id,
+        todo_id,
     )
     .execute(db)
     .await?;
@@ -73,14 +79,15 @@ pub async fn delete_todo_by_id(db: &PgPool, todo_id: Uuid) -> Result<(), Error> 
     Ok(())
 }
 
-pub async fn toggle_todo_by_id(db: &PgPool, todo_id: Uuid) -> Result<(), Error> {
+pub async fn toggle_todo_by_id(db: &PgPool, user_id: Uuid, todo_id: Uuid) -> Result<(), Error> {
     sqlx::query!(
         "
-            update todo
+            update todos
             set done = not done
-            where todo_id = $1
+            where user_id = $1 and todo_id = $2
         ",
-        todo_id
+        user_id,
+        todo_id,
     )
     .execute(db)
     .await?;
@@ -88,15 +95,21 @@ pub async fn toggle_todo_by_id(db: &PgPool, todo_id: Uuid) -> Result<(), Error> 
     Ok(())
 }
 
-pub async fn update_todo_by_id(db: &PgPool, todo_id: Uuid, content: String) -> Result<(), Error> {
+pub async fn update_todo_by_id(
+    db: &PgPool,
+    user_id: Uuid,
+    todo_id: Uuid,
+    content: String,
+) -> Result<(), Error> {
     sqlx::query!(
         "
-            update todo
-            set content = $1
-            where todo_id = $2
+            update todos
+            set content = $3
+            where user_id = $1 and todo_id = $2
         ",
+        user_id,
+        todo_id,
         content,
-        todo_id
     )
     .execute(db)
     .await?;

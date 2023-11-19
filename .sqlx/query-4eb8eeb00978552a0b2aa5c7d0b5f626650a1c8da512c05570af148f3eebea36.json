@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            with inserted_todo as (\n                insert into todo(content)\n                values($1)\n                returning todo_id, content, done, created_at\n            ) \n            select todo_id, content, done, created_at from inserted_todo\n        ",
+  "query": "\n            with inserted_todo as (\n                insert into todos(user_id, content)\n                values($1, $2)\n                returning todo_id, content, done, user_id, created_at\n            ) \n            select todo_id, content, done, user_id, created_at from inserted_todo\n        ",
   "describe": {
     "columns": [
       {
@@ -20,12 +20,18 @@
       },
       {
         "ordinal": 3,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
         "name": "created_at",
         "type_info": "Timestamptz"
       }
     ],
     "parameters": {
       "Left": [
+        "Uuid",
         "Text"
       ]
     },
@@ -33,8 +39,9 @@
       false,
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "c85a3dbdf4dfa1a049c22741722330dc36a52d4eb60e4ff638a022f9c831183d"
+  "hash": "4eb8eeb00978552a0b2aa5c7d0b5f626650a1c8da512c05570af148f3eebea36"
 }

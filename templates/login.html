@@ -1,0 +1,13 @@
+{% extends "layout/base.html" %} {% block title %}Login{% endblock %} {% block
+body %}
+
+<form method="POST" action="/login">
+  <fieldset>
+    <legend>Login</legend>
+    <input type="text" name="email" placeholder="Email" />
+    <input type="password" name="password" placeholder="Password" />
+    <input type="submit" value="Login" />
+  </fieldset>
+</form>
+
+{% endblock %}

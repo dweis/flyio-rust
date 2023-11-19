@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            update todos\n            set done = not done\n            where user_id = $1 and todo_id = $2\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "74eb31ac1ce731dc7f5611c3308a239e4681d28bbf1dcf0e529eb41344277616"
+}

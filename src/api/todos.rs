@@ -6,6 +6,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 use validator::Validate;
 
+use crate::data::user::AuthSession;
 use crate::{data, error::Error, templates::*};
 
 #[derive(Deserialize, Validate)]
@@ -17,7 +18,7 @@ pub struct CreateTodoRequest {
 
 pub fn router() -> Router {
     Router::new()
-        .route("/", get(handle_get_todos).post(handle_create_todo))
+        .route("/todos", get(handle_get_todos))
         .route("/todos", post(handle_create_todo_htmx))
         .route(
             "/todos/:todo_id",
@@ -28,25 +29,15 @@ pub fn router() -> Router {
 }
 
 #[axum::debug_handler]
-pub async fn handle_get_todos(db: Extension<PgPool>) -> Result<impl IntoResponse, Error> {
-    //Result<Html<&'static str>> {
-    let todos = data::todo::get_todos(&db).await?;
-
-    let tmpl = TodosTemplate { todos: &todos };
-
-    Ok((StatusCode::OK, Html(tmpl.render().unwrap()).into_response()))
-}
-
-#[axum::debug_handler]
-pub async fn handle_create_todo(
+pub async fn handle_get_todos(
+    auth_session: AuthSession,
     db: Extension<PgPool>,
-    Form(req): Form<CreateTodoRequest>,
 ) -> Result<impl IntoResponse, Error> {
-    req.validate()?;
+    let user = auth_session.user.unwrap();
 
-    data::todo::create_todo(&db, req.content).await?;
+    //Result<Html<&'static str>> {
+    let todos = data::todo::get_todos(&db, user.user_id).await?;
 
-    let todos = data::todo::get_todos(&db).await?;
     let tmpl = TodosTemplate { todos: &todos };
 
     Ok((StatusCode::OK, Html(tmpl.render().unwrap()).into_response()))
@@ -54,14 +45,17 @@ pub async fn handle_create_todo(
 
 #[axum::debug_handler]
 pub async fn handle_create_todo_htmx(
+    auth_session: AuthSession,
     db: Extension<PgPool>,
     Form(req): Form<CreateTodoRequest>,
 ) -> Result<impl IntoResponse, Error> {
+    let user = auth_session.user.unwrap();
+
     req.validate()?;
 
-    data::todo::create_todo(&db, req.content).await?;
+    data::todo::create_todo(&db, user.user_id, req.content).await?;
 
-    let todos = data::todo::get_todos(&db).await?;
+    let todos = data::todo::get_todos(&db, user.user_id).await?;
     let tmpl = PartialTodosTemplate { todos: &todos };
 
     Ok((StatusCode::OK, Html(tmpl.render().unwrap()).into_response()))
@@ -69,22 +63,28 @@ pub async fn handle_create_todo_htmx(
 
 #[axum::debug_handler]
 pub async fn handle_delete_todo_htmx(
+    auth_session: AuthSession,
     db: Extension<PgPool>,
     Path(todo_id): Path<Uuid>,
 ) -> Result<impl IntoResponse, Error> {
-    data::todo::delete_todo_by_id(&db, todo_id).await?;
+    let user = auth_session.user.unwrap();
+
+    data::todo::delete_todo_by_id(&db, user.user_id, todo_id).await?;
 
     Ok((StatusCode::OK, Html("").into_response()))
 }
 
 #[axum::debug_handler]
 pub async fn handle_toggle_todo_htmx(
+    auth_session: AuthSession,
     db: Extension<PgPool>,
     Path(todo_id): Path<Uuid>,
 ) -> Result<impl IntoResponse, Error> {
-    data::todo::toggle_todo_by_id(&db, todo_id).await?;
+    let user = auth_session.user.unwrap();
 
-    let todo = data::todo::get_todo_by_id(&db, todo_id).await?;
+    data::todo::toggle_todo_by_id(&db, user.user_id, todo_id).await?;
+
+    let todo = data::todo::get_todo_by_id(&db, user.user_id, todo_id).await?;
 
     let tmpl = SingleTodoTemplate { todo: &todo };
 
@@ -93,10 +93,13 @@ pub async fn handle_toggle_todo_htmx(
 
 #[axum::debug_handler]
 pub async fn handle_edit_todo_htmx(
+    auth_session: AuthSession,
     db: Extension<PgPool>,
     Path(todo_id): Path<Uuid>,
 ) -> Result<impl IntoResponse, Error> {
-    let todo = data::todo::get_todo_by_id(&db, todo_id).await?;
+    let user = auth_session.user.unwrap();
+
+    let todo = data::todo::get_todo_by_id(&db, user.user_id, todo_id).await?;
 
     let tmpl = EditTodoTemplate { todo: &todo };
 
@@ -105,15 +108,18 @@ pub async fn handle_edit_todo_htmx(
 
 #[axum::debug_handler]
 pub async fn handle_update_todo_htmx(
+    auth_session: AuthSession,
     db: Extension<PgPool>,
     Path(todo_id): Path<Uuid>,
     Form(req): Form<CreateTodoRequest>,
 ) -> Result<impl IntoResponse, Error> {
+    let user = auth_session.user.unwrap();
+
     req.validate()?;
 
-    data::todo::update_todo_by_id(&db, todo_id, req.content).await?;
+    data::todo::update_todo_by_id(&db, user.user_id, todo_id, req.content).await?;
 
-    let todo = data::todo::get_todo_by_id(&db, todo_id).await?;
+    let todo = data::todo::get_todo_by_id(&db, user.user_id, todo_id).await?;
 
     let tmpl = SingleTodoTemplate { todo: &todo };
 

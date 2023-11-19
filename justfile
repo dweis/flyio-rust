@@ -17,6 +17,15 @@ migratedb:
 db:
   psql ${DATABASE_URL}
 
+startredis:
+  (docker start some-redis || docker run --name some-redis -p 6379:6379 -d redis) && echo "started"
+
+stopredis:
+  docker stop some-redis
+
+redis:
+  redis-cli -u $REDIS_URL
+
 # Run 'cargo watch' to run the project (auto-recompiles)
 watch *ARGS:
   cargo watch -x "run -- {{ARGS}}"

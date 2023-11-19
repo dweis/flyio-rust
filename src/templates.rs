@@ -12,6 +12,14 @@ pub struct TodosTemplate<'a> {
 }
 
 #[derive(Template)]
+#[template(path = "login.html")]
+pub struct LoginTemplate;
+
+#[derive(Template)]
+#[template(path = "signup.html")]
+pub struct SignupTemplate;
+
+#[derive(Template)]
 #[template(path = "partial/todos.html")]
 pub struct PartialTodosTemplate<'a> {
     pub todos: &'a Vec<Todo>,
