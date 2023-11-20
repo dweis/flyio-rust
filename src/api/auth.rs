@@ -13,13 +13,7 @@ use validator::Validate;
 
 use crate::data::user::AuthSession;
 use crate::{data, error::Error, templates::*};
-
-#[derive(Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct CreateTodoRequest {
-    #[validate(length(min = 1, max = 1000))]
-    pub content: String,
-}
+use crate::validators::*;
 
 pub fn router() -> Router {
     Router::new()
@@ -57,7 +51,7 @@ pub async fn handle_logout(mut auth_session: AuthSession) -> impl IntoResponse {
 #[derive(Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SignupForm {
-    #[validate(length(min = 1, max = 1000))]
+    #[validate(email)]
     pub email: String,
     #[validate(length(min = 1, max = 1000))]
     pub password: String,
@@ -66,9 +60,12 @@ pub struct SignupForm {
 #[derive(Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct LoginForm {
-    #[validate(length(min = 4, max = 1000))]
+    #[validate(email)]
     pub email: String,
-    #[validate(length(min = 1, max = 1000))]
+    #[validate(
+        custom(function= "validate_password", message = "Password must be at least 8 characters long and include a digit, an uppercase letter, and a lowercase letter."),
+        regex(path = "RE_SPECIAL_CHAR", message = "Password must contain a special character.")
+    )]
     pub password: String,
 }
 
